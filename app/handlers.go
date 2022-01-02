@@ -3,7 +3,7 @@ package app
 import (
 	"encoding/json"
 	"encoding/xml"
-	"fmt"
+	"github.com/est5/simple-api/service"
 	"net/http"
 )
 
@@ -13,12 +13,16 @@ type Customer struct {
 	Zipcode string `json:"zipcode" xml:"zipcode"`
 }
 
-func getAllCustomers(w http.ResponseWriter, r *http.Request) {
-	customers := []Customer{
-		{"Jay", "Moscow", "2281337"},
-		{"Alex", "NY", "1488322228"},
-	}
+type CustomerHandlers struct {
+	service service.CustomerService
+}
 
+func (ch *CustomerHandlers) getAllCustomers(w http.ResponseWriter, r *http.Request) {
+	//customers := []Customer{
+	//	{"Jay", "Moscow", "2281337"},
+	//	{"Alex", "NY", "1488322228"},
+	//}
+	customers, _ := ch.service.GetAllCustomer()
 	if r.Header.Get("Content-Type") == "application/xml" {
 		w.Header().Set("Content-Type", "application/xml")
 		xml.NewEncoder(w).Encode(customers)
@@ -26,8 +30,4 @@ func getAllCustomers(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(customers)
 	}
-}
-
-func greet(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello world")
 }
